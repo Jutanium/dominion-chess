@@ -1,35 +1,24 @@
 import { createMemo, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
+import { Piece } from "./Piece";
+import { Player } from "./Players";
 
-export function createPiece(
-  x,
-  y,
-  icon?: string,
-  moveOptions?: MoveOptions
-): Piece {
-  return {
-    point: { x, y },
-    icon: icon || "🐻",
-    moveOptions: moveOptions || (() => []),
-  };
-}
 
 export interface Point {
   x: number;
   y: number;
 }
 
-export interface Piece {
-  point: Point;
-  icon: string;
-  moveOptions: MoveOptions;
+export interface Turn {
+  playerTurn: string
 }
 
-export type MoveOptions = (piece: Piece) => Point[];
+
 
 export function createGameState(
   startingDimension: number,
-  startingPieces: Piece[]
+  startingPieces: Piece[],
+  players: Player[]
 ) {
   const [dimension, setDimension] = createSignal(startingDimension);
 
@@ -39,10 +28,13 @@ export function createGameState(
     false
   );
 
+  const [turn, setTurn] = createSignal<string>(players[0].firstTurn ? players[0].id : players[1].id)
+
   function moveActivePiece(moveTo: Point) {
     const index = activePieceIndex();
-    if (index !== false) {
+    if (index !== false && pieces[index].owner.id === turn()) {
       setPieces(index, "point", moveTo);
+      finishTurn();
     }
   }
 
@@ -83,6 +75,12 @@ export function createGameState(
   function isPossibleMove(point: Point) {
     return possibleMoves().some((p) => p.x === point.x && p.y === point.y);
   }
+  
+  function finishTurn() {
+    console.log(turn())
+    setTurn(players[0].id === turn() ? players[1].id : players[0].id)
+
+  }
 
   return {
     dimension,
@@ -91,8 +89,10 @@ export function createGameState(
     setActivePieceIndex,
     activePiece,
     moveActivePiece,
+    turn,
     pieces,
     isPossibleMove,
+    finishTurn
   };
 }
 

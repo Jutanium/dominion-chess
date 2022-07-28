@@ -3,11 +3,10 @@ import { createStore } from "solid-js/store";
 import { GameSquare } from "./GameSquare";
 import {
   createGameState,
-  createPiece,
   GameState,
-  MoveOptions,
-  Piece,
 } from "./gameState";
+import { Piece, MoveOptions, createPiece } from "./Piece";
+import { createPlayer } from "./Players";
 
 const Game: Component<{ state: GameState }> = (props) => {
   const squareWidth = 10;
@@ -54,21 +53,43 @@ const moveSurrounding: MoveOptions = (piece: Piece) => {
   ];
 };
 
+const moveSurrounding1: MoveOptions = (piece: Piece) => {
+  return [
+    { x: piece.point.x + 1, y: piece.point.y + 3 },
+    { x: piece.point.x + 1, y: piece.point.y - 3},
+    { x: piece.point.x - 1, y: piece.point.y + 3},
+    { x: piece.point.x - 1, y: piece.point.y - 3},
+    { x: piece.point.x + 3, y: piece.point.y + 1},
+    { x: piece.point.x + 3, y: piece.point.y - 1},
+    { x: piece.point.x - 3 , y: piece.point.y +1 },
+    { x: piece.point.x - 3, y: piece.point.y - 1},
+    
+  ];
+};
+const players = [
+  createPlayer("Player1", false, 100),
+  createPlayer("Player2", true, 100)
+]
 const App: Component = () => {
   const startingPieces = [
-    createPiece(1, 2, "🐻", moveSurrounding),
-    createPiece(1, 3),
-    createPiece(3, 6),
+    createPiece(1, 2, players[0], "🐻", moveSurrounding),
+    createPiece(1, 3, players[1], "", moveSurrounding1),
+    createPiece(3, 6, players[0]),
   ];
 
-  const gameState = createGameState(10, startingPieces);
+
+
+  const gameState = createGameState(10, startingPieces, players);
 
   return (
+    <>
+        <div>{gameState.turn()}</div>
     <div class="flex flex-col">
       <div class="w-100 h-100">
         <Game state={gameState} />
       </div>
     </div>
+    </>
   );
 };
 
