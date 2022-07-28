@@ -1,5 +1,6 @@
 //this is the top
 import { Component } from "solid-js";
+import { Properties } from "solid-js/web";
 import { GameState, Point } from "./gameState";
 
 export const GameSquare: Component<{
@@ -18,13 +19,23 @@ export const GameSquare: Component<{
     );
   };
 
+  const isYourPiece = () => {
+    const activePiece = props.state.activePiece();
+    return (
+      activePiece &&
+      activePiece.owner.id === props.state.turn()
+    );
+  };
+
   const isPossibleMove = () => props.state.isPossibleMove(point);
 
   const isHighlighted = () => isPieceMoving() || isPossibleMove();
 
+  const highlightColor = () => isYourPiece() ? "green" : "red";
+  
   const opacity = () => ((point.x + point.y) % 2 === 1 ? 1 : 0.3);
 
-  const fill = () => (isHighlighted() ? "red" : "gray");
+  const fill = () => (isHighlighted() ? highlightColor() : "gray");
 
   function clicked() {
     if (isPossibleMove()) {

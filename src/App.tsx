@@ -5,7 +5,7 @@ import {
   createGameState,
   GameState,
 } from "./gameState";
-import { Piece, MoveOptions, createPiece } from "./Piece";
+import { Piece, MoveOptions, createPiece, kingMoves, knightMoves } from "./Piece";
 import { createPlayer } from "./Players";
 
 const Game: Component<{ state: GameState }> = (props) => {
@@ -40,41 +40,18 @@ const Game: Component<{ state: GameState }> = (props) => {
   );
 };
 
-const moveSurrounding: MoveOptions = (piece: Piece) => {
-  return [
-    { x: piece.point.x - 1, y: piece.point.y - 1 },
-    { x: piece.point.x, y: piece.point.y - 1 },
-    { x: piece.point.x + 1, y: piece.point.y - 1 },
-    { x: piece.point.x - 1, y: piece.point.y },
-    { x: piece.point.x + 1, y: piece.point.y },
-    { x: piece.point.x - 1, y: piece.point.y + 1 },
-    { x: piece.point.x, y: piece.point.y + 1 },
-    { x: piece.point.x + 1, y: piece.point.y + 1 },
-  ];
-};
 
-const moveSurrounding1: MoveOptions = (piece: Piece) => {
-  return [
-    { x: piece.point.x + 1, y: piece.point.y + 3 },
-    { x: piece.point.x + 1, y: piece.point.y - 3},
-    { x: piece.point.x - 1, y: piece.point.y + 3},
-    { x: piece.point.x - 1, y: piece.point.y - 3},
-    { x: piece.point.x + 3, y: piece.point.y + 1},
-    { x: piece.point.x + 3, y: piece.point.y - 1},
-    { x: piece.point.x - 3 , y: piece.point.y +1 },
-    { x: piece.point.x - 3, y: piece.point.y - 1},
-    
-  ];
-};
 const players = [
   createPlayer("Player1", false, 100),
   createPlayer("Player2", true, 100)
 ]
 const App: Component = () => {
   const startingPieces = [
-    createPiece(1, 2, players[0], "🐻", moveSurrounding),
-    createPiece(1, 3, players[1], "", moveSurrounding1),
-    createPiece(3, 6, players[0]),
+    createPiece(1, 2, players[0], "🐻", kingMoves),
+    createPiece(1, 3, players[1], "V", knightMoves),
+    createPiece(3, 6, players[1], "F", kingMoves),
+    createPiece(5, 3, players[0], "X", knightMoves),
+
   ];
 
 

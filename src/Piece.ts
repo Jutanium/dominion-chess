@@ -10,6 +10,33 @@ export interface Piece {
 
 export type MoveOptions = (piece: Piece) => Point[];
 
+export const kingMoves: MoveOptions = (piece: Piece) => {
+    return [
+      { x: piece.point.x - 1, y: piece.point.y - 1 },
+      { x: piece.point.x, y: piece.point.y - 1 },
+      { x: piece.point.x + 1, y: piece.point.y - 1 },
+      { x: piece.point.x - 1, y: piece.point.y },
+      { x: piece.point.x + 1, y: piece.point.y },
+      { x: piece.point.x - 1, y: piece.point.y + 1 },
+      { x: piece.point.x, y: piece.point.y + 1 },
+      { x: piece.point.x + 1, y: piece.point.y + 1 },
+    ];
+  };
+  
+  export const knightMoves: MoveOptions = (piece: Piece) => {
+    return [
+      { x: piece.point.x + 1, y: piece.point.y + 3 },
+      { x: piece.point.x + 1, y: piece.point.y - 3},
+      { x: piece.point.x - 1, y: piece.point.y + 3},
+      { x: piece.point.x - 1, y: piece.point.y - 3},
+      { x: piece.point.x + 3, y: piece.point.y + 1},
+      { x: piece.point.x + 3, y: piece.point.y - 1},
+      { x: piece.point.x - 3 , y: piece.point.y +1 },
+      { x: piece.point.x - 3, y: piece.point.y - 1},
+      
+    ];
+  };
+
 export function createPiece(
     x,
     y,
