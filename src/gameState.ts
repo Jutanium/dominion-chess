@@ -14,6 +14,9 @@ export interface Turn {
 }
 
 
+interface ActivePiece extends Piece {
+  possibleMoves: Point[];
+}
 
 export function createGameState(
   startingDimension: number,
@@ -22,7 +25,8 @@ export function createGameState(
 ) {
   const [dimension, setDimension] = createSignal(startingDimension);
 
-  const [pieces, setPieces] = createStore<Piece[]>([]);
+
+  const [pieces, setPieces] = createStore<ActivePiece[]>([]);
 
   const [activePieceIndex, setActivePieceIndex] = createSignal<number | false>(
     false
@@ -34,9 +38,16 @@ export function createGameState(
 
   const currentPlayer = () => players[activePlayerIndex()];
 
+  const getPossibleMoves = (piece: Piece) => piece.moveOptions(piece).filter(isValidPoint)
+
   function addPiece(piece: Piece, player: 0 | 1) {
-    piece.owner = player;
-    setPieces(pieces => [...pieces, piece]);
+    const newPiece: ActivePiece = {
+      ...piece, 
+      owner: player, 
+      possibleMoves: getPossibleMoves(piece)
+    }; 
+
+    setPieces(pieces => [...pieces, newPiece]);
   }
 
   function moveActivePiece(moveTo: Point) {
@@ -44,6 +55,7 @@ export function createGameState(
     const playerIndex = activePlayerIndex();
     if (pieceIndex !== false && pieces[pieceIndex].owner === playerIndex) { 
       setPieces(pieceIndex, "point", moveTo);
+      setPieces(pieceIndex, "possibleMoves", getPossibleMoves(pieces[pieceIndex]));
       finishTurn();
     }
   }
@@ -77,19 +89,12 @@ export function createGameState(
     );
   }
 
-
-  const possibleMoves = () => {
-    const movingPiece = activePiece();
-
-    if (movingPiece) {
-      const moves = movingPiece.moveOptions(movingPiece).filter(isValidPoint);
-      return moves;
-    }
-    return [];
-  };
-
   function isPossibleMove(point: Point) {
-    return possibleMoves().some((p) => p.x === point.x && p.y === point.y);
+    const movingPiece = activePiece();
+    if (movingPiece) {
+      return movingPiece.possibleMoves.some((p) => p.x === point.x && p.y === point.y);
+    }
+    return false;
   }
   
   function finishTurn() {
