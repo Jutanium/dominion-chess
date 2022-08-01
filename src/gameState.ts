@@ -15,8 +15,10 @@ export interface Turn {
 
 
 interface ActivePiece extends Piece {
-  possibleMoves: Point[];
+  possibleMoves: Set<string>;
 }
+
+const stringifyPoint = (point: Point) => `${point.x},${point.y}`;
 
 export function createGameState(
   startingDimension: number,
@@ -38,13 +40,20 @@ export function createGameState(
 
   const currentPlayer = () => players[activePlayerIndex()];
 
-  const getPossibleMoves = (piece: Piece) => piece.moveOptions(piece).filter(isValidPoint)
+  const calculatePossibleMoves = (piece: Piece) => {
+  
+   const pointSet = new Set<string>();
+
+   piece.moveOptions(piece).filter(isValidPoint).forEach(point => pointSet.add(stringifyPoint(point)));
+
+   return pointSet;
+  }
 
   function addPiece(piece: Piece, player: 0 | 1) {
     const newPiece: ActivePiece = {
       ...piece, 
       owner: player, 
-      possibleMoves: getPossibleMoves(piece)
+      possibleMoves: calculatePossibleMoves(piece)
     }; 
 
     setPieces(pieces => [...pieces, newPiece]);
@@ -55,7 +64,7 @@ export function createGameState(
     const playerIndex = activePlayerIndex();
     if (pieceIndex !== false && pieces[pieceIndex].owner === playerIndex) { 
       setPieces(pieceIndex, "point", moveTo);
-      setPieces(pieceIndex, "possibleMoves", getPossibleMoves(pieces[pieceIndex]));
+      setPieces(pieceIndex, "possibleMoves", calculatePossibleMoves(pieces[pieceIndex]));
       finishTurn();
     }
   }
@@ -92,7 +101,7 @@ export function createGameState(
   function isPossibleMove(point: Point) {
     const movingPiece = activePiece();
     if (movingPiece) {
-      return movingPiece.possibleMoves.some((p) => p.x === point.x && p.y === point.y);
+      return movingPiece.possibleMoves.has(stringifyPoint(point));
     }
     return false;
   }
