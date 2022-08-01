@@ -41,26 +41,21 @@ const Game: Component<{ state: GameState }> = (props) => {
 };
 
 
-const players = [
-  createPlayer("Player1", false, 100),
-  createPlayer("Player2", true, 100)
-]
+const player1 = createPlayer("Player1", 100);
+const player2 = createPlayer("Player2", 100);
+
 const App: Component = () => {
-  const startingPieces = [
-    createPiece(1, 2, players[0], "🐻", kingMoves),
-    createPiece(1, 3, players[1], "V", knightMoves),
-    createPiece(3, 6, players[1], "F", kingMoves),
-    createPiece(5, 3, players[0], "X", knightMoves),
 
-  ];
+  const gameState = createGameState(10, player1, player2);
 
-
-
-  const gameState = createGameState(10, startingPieces, players);
+  gameState.addPiece(createPiece(1, 2, "🐻", kingMoves), 0);
+  gameState.addPiece(createPiece(1, 3, "♞", knightMoves), 0);
+  gameState.addPiece(createPiece(3, 6, "👑", kingMoves), 1);
+  gameState.addPiece(createPiece(5, 3, "♘", knightMoves), 1);
 
   return (
     <>
-        <div>{gameState.turn()}</div>
+    <div>{gameState.currentPlayer().name}</div>
     <div class="flex flex-col">
       <div class="w-100 h-100">
         <Game state={gameState} />

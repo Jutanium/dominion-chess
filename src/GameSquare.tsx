@@ -22,8 +22,7 @@ export const GameSquare: Component<{
   const isYourPiece = () => {
     const activePiece = props.state.activePiece();
     return (
-      activePiece &&
-      activePiece.owner.id === props.state.turn()
+      activePiece && props.state.isActiveOwner(activePiece.owner)
     );
   };
 

@@ -1,6 +1,6 @@
 import { createMemo, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
-import { Piece } from "./Piece";
+import { Owner, Piece } from "./Piece";
 import { Player } from "./Players";
 
 
@@ -17,23 +17,33 @@ export interface Turn {
 
 export function createGameState(
   startingDimension: number,
-  startingPieces: Piece[],
-  players: Player[]
+  startingPlayer: Player,
+  secondPlayer: Player,
 ) {
   const [dimension, setDimension] = createSignal(startingDimension);
 
-  const [pieces, setPieces] = createStore<Piece[]>(startingPieces);
+  const [pieces, setPieces] = createStore<Piece[]>([]);
 
   const [activePieceIndex, setActivePieceIndex] = createSignal<number | false>(
     false
   );
 
-  const [turn, setTurn] = createSignal<string>(players[0].firstTurn ? players[0].id : players[1].id)
+  const [players, setPlayerData] = createStore<[Player, Player]>([startingPlayer, secondPlayer]);
+
+  const [activePlayerIndex, setActivePlayerIndex] = createSignal<number>(0);
+
+  const currentPlayer = () => players[activePlayerIndex()];
+
+  function addPiece(piece: Piece, player: 0 | 1) {
+    piece.owner = player;
+    setPieces(pieces => [...pieces, piece]);
+  }
 
   function moveActivePiece(moveTo: Point) {
-    const index = activePieceIndex();
-    if (index !== false && pieces[index].owner.id === turn()) {
-      setPieces(index, "point", moveTo);
+    const pieceIndex = activePieceIndex();
+    const playerIndex = activePlayerIndex();
+    if (pieceIndex !== false && pieces[pieceIndex].owner === playerIndex) { 
+      setPieces(pieceIndex, "point", moveTo);
       finishTurn();
     }
   }
@@ -45,6 +55,11 @@ export function createGameState(
     }
     return pieces[index];
   };
+
+
+  function isActiveOwner(player: Owner) {
+    return activePlayerIndex() === player;
+  }
 
   const squaresArray = createMemo(() =>
     Array.from({ length: dimension() ** 2 }, (_, i) => ({
@@ -62,6 +77,7 @@ export function createGameState(
     );
   }
 
+
   const possibleMoves = () => {
     const movingPiece = activePiece();
 
@@ -77,22 +93,22 @@ export function createGameState(
   }
   
   function finishTurn() {
-    console.log(turn())
-    setTurn(players[0].id === turn() ? players[1].id : players[0].id)
-
+    setActivePlayerIndex(prevIndex => (prevIndex + 1) % 2);
   }
 
   return {
-    dimension,
-    isValidPoint,
-    squaresArray,
-    setActivePieceIndex,
     activePiece,
-    moveActivePiece,
-    turn,
-    pieces,
+    addPiece,
+    currentPlayer,
+    dimension,
+    finishTurn,
+    isActiveOwner,
     isPossibleMove,
-    finishTurn
+    isValidPoint,
+    moveActivePiece,
+    pieces,
+    setActivePieceIndex,
+    squaresArray,
   };
 }
 

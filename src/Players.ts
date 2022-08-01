@@ -1,17 +1,13 @@
-import { createSignal } from "solid-js";
-
 export interface Player {
-    id?: string;
-    firstTurn: boolean;
+    name: string;
     health: number;
   }
 
-export function createPlayer(id?: string, firstTurn?: boolean, startingHealth?: number
+export function createPlayer(name?: string, startingHealth?: number
   ): Player {
     return {
-        firstTurn: firstTurn || false,
         health: startingHealth || 100,
-        id: id || "Anonymous"
+        name: name || "Anonymous"
     }
   }
   

@@ -1,12 +1,15 @@
 import { Point } from "./gameState";
 import { Player } from "./Players";
 
+export type Owner = -1 | 0 | 1;
+
 export interface Piece {
     point: Point;
     icon: string;
-    owner: Player;
     moveOptions: MoveOptions;
+    owner: Owner
   }
+
 
 export type MoveOptions = (piece: Piece) => Point[];
 
@@ -25,30 +28,28 @@ export const kingMoves: MoveOptions = (piece: Piece) => {
   
   export const knightMoves: MoveOptions = (piece: Piece) => {
     return [
-      { x: piece.point.x + 1, y: piece.point.y + 3 },
-      { x: piece.point.x + 1, y: piece.point.y - 3},
-      { x: piece.point.x - 1, y: piece.point.y + 3},
-      { x: piece.point.x - 1, y: piece.point.y - 3},
-      { x: piece.point.x + 3, y: piece.point.y + 1},
-      { x: piece.point.x + 3, y: piece.point.y - 1},
-      { x: piece.point.x - 3 , y: piece.point.y +1 },
-      { x: piece.point.x - 3, y: piece.point.y - 1},
-      
+      { x: piece.point.x + 1, y: piece.point.y + 2 },
+      { x: piece.point.x + 1, y: piece.point.y - 2},
+      { x: piece.point.x - 1, y: piece.point.y + 2},
+      { x: piece.point.x - 1, y: piece.point.y - 2},
+      { x: piece.point.x + 2, y: piece.point.y + 1},
+      { x: piece.point.x + 2, y: piece.point.y - 1},
+      { x: piece.point.x - 2 , y: piece.point.y +1 },
+      { x: piece.point.x - 2, y: piece.point.y - 1},
     ];
   };
 
 export function createPiece(
     x,
     y,
-    owner: Player,
     icon?: string,
     moveOptions?: MoveOptions
   ): Piece {
     return {
       point: { x, y },
       icon: icon || "🐻",
-      owner: owner,
       moveOptions: moveOptions || (() => []),
+      owner: -1
     };
   }
   
