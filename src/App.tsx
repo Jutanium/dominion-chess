@@ -3,11 +3,10 @@ import { createStore } from "solid-js/store";
 import { GameSquare } from "./GameSquare";
 import {
   createGameState,
-  createPiece,
   GameState,
-  MoveOptions,
-  Piece,
 } from "./gameState";
+import { Piece, MoveOptions, createPiece, kingMoves, knightMoves } from "./Piece";
+import { createPlayer } from "./Players";
 
 const Game: Component<{ state: GameState }> = (props) => {
   const squareWidth = 10;
@@ -41,34 +40,28 @@ const Game: Component<{ state: GameState }> = (props) => {
   );
 };
 
-const moveSurrounding: MoveOptions = (piece: Piece) => {
-  return [
-    { x: piece.point.x - 1, y: piece.point.y - 1 },
-    { x: piece.point.x, y: piece.point.y - 1 },
-    { x: piece.point.x + 1, y: piece.point.y - 1 },
-    { x: piece.point.x - 1, y: piece.point.y },
-    { x: piece.point.x + 1, y: piece.point.y },
-    { x: piece.point.x - 1, y: piece.point.y + 1 },
-    { x: piece.point.x, y: piece.point.y + 1 },
-    { x: piece.point.x + 1, y: piece.point.y + 1 },
-  ];
-};
+
+const player1 = createPlayer("Player1", 100);
+const player2 = createPlayer("Player2", 100);
 
 const App: Component = () => {
-  const startingPieces = [
-    createPiece(1, 2, "🐻", moveSurrounding),
-    createPiece(1, 3),
-    createPiece(3, 6),
-  ];
 
-  const gameState = createGameState(10, startingPieces);
+  const gameState = createGameState(10, player1, player2);
+
+  gameState.addPiece(createPiece(1, 2, "🐻", kingMoves), 0);
+  gameState.addPiece(createPiece(1, 3, "♞", knightMoves), 0);
+  gameState.addPiece(createPiece(3, 6, "👑", kingMoves), 1);
+  gameState.addPiece(createPiece(5, 3, "♘", knightMoves), 1);
 
   return (
+    <>
+    <div>{gameState.currentPlayer().name}</div>
     <div class="flex flex-col">
       <div class="w-100 h-100">
         <Game state={gameState} />
       </div>
     </div>
+    </>
   );
 };
 
