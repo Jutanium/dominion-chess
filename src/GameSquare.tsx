@@ -30,11 +30,17 @@ export const GameSquare: Component<{
 
   const isHighlighted = () => isPieceMoving() || isPossibleMove();
 
-  const highlightColor = () => isYourPiece() ? "green" : "red";
-  
-  const opacity = () => ((point.x + point.y) % 2 === 1 ? 1 : 0.3);
+  const isDark = () => (point.x + point.y) % 2 === 1;
 
-  const fill = () => (isHighlighted() ? highlightColor() : "gray");
+  const highlightColor = () =>
+    `url(#pattern-${isYourPiece() ? 'valid' : 'invalid'}-${
+      isDark() ? 'dark' : 'light'
+    })`;
+
+  const fill = () =>
+    isHighlighted()
+      ? highlightColor()
+      : `${isDark() ? 'gray' : 'rgba(128, 128, 128, 0.3)'}`;
 
   function clicked() {
     if (isPossibleMove()) {
@@ -47,7 +53,6 @@ export const GameSquare: Component<{
     <rect
       onClick={clicked}
       fill={fill()}
-      fill-opacity={opacity()}
       width={props.width}
       height={props.width}
       x={point.x * props.width}

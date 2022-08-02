@@ -16,6 +16,84 @@ const Game: Component<{ state: GameState }> = (props) => {
 
   return (
     <svg class="w-full h-full" viewBox={viewBox()}>
+      <defs>
+        <pattern id="pattern-valid-dark" x="0" y="0" width="1" height="1">
+          <rect
+            x="0"
+            y="0"
+            width={squareWidth}
+            height={squareWidth}
+            fill="green"
+          />
+          <text
+            font-size={squareWidth / 4 + 'px'}
+            x="0"
+            y="0"
+            stroke="white"
+            dx={squareWidth * 0.675}
+            dy={squareWidth * 0.25}
+          >
+            ✓
+          </text>
+        </pattern>
+        <pattern id="pattern-valid-light" x="0" y="0" width="1" height="1">
+          <rect
+            x="0"
+            y="0"
+            width={squareWidth}
+            height={squareWidth}
+            fill="rgba(0, 255, 0, 0.3)"
+          />
+          <text
+            font-size={squareWidth / 4 + 'px'}
+            x="0"
+            y="0"
+            stroke="black"
+            dx={squareWidth * 0.675}
+            dy={squareWidth * 0.25}
+          >
+            ✓
+          </text>
+        </pattern>
+        <pattern id="pattern-invalid-dark" x="0" y="0" width="1" height="1">
+          <rect
+            x="0"
+            y="0"
+            width={squareWidth}
+            height={squareWidth}
+            fill="red"
+          />
+          <text
+            font-size={squareWidth / 4 + 'px'}
+            x="0"
+            y="0"
+            stroke="white"
+            dx={squareWidth * 0.675}
+            dy={squareWidth * 0.25}
+          >
+            ╳
+          </text>
+        </pattern>
+        <pattern id="pattern-invalid-light" x="0" y="0" width="1" height="1">
+          <rect
+            x="0"
+            y="0"
+            width={squareWidth}
+            height={squareWidth}
+            fill="rgba(255, 0, 0, 0.3)"
+          />
+          <text
+            font-size={squareWidth / 4 + 'px'}
+            x="0"
+            y="0"
+            stroke="black"
+            dx={squareWidth * 0.675}
+            dy={squareWidth * 0.25}
+          >
+            ╳
+          </text>
+        </pattern>
+      </defs>
       <For each={props.state.squaresArray()}>
         {(point, i) => (
           <GameSquare state={props.state} point={point} width={squareWidth} />
